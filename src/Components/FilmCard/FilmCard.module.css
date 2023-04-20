@@ -1,0 +1,22 @@
+.film-card {
+  display: flex;
+  border-radius: 0;
+  height: 280px;
+  filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+.film-card__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.film-card__content {
+}
+
+.film-card__image {
+  width: auto;
+  height: 100%;
+  min-width: 183px;
+  border-radius: 0 !important;
+  object-fit: cover;
+}
