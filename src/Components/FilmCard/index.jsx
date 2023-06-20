@@ -1,13 +1,15 @@
 import React from 'react'
 import { Card, Col, Typography } from 'antd'
 import PropTypes from 'prop-types'
-import { StarFilled, StarOutlined } from '@ant-design/icons'
+import { format } from 'date-fns'
+
+import StarRating from '../StarRating/index.jsx'
 
 import classes from './FilmCard.module.css'
 
 const { Title, Text, Paragraph } = Typography
 
-const ellipsisOverview = (text, words) => {
+const ellipsisText = (text, words) => {
   const arr = text.split(' ')
   if (arr.length <= words) {
     return text
@@ -15,12 +17,18 @@ const ellipsisOverview = (text, words) => {
   return arr.splice(0, words).join(' ') + ' ...'
 }
 
-const parseAndFormatDate = (dateString) =>
-  new Date(Date.parse(dateString)).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+const parseAndFormatDate = (dateString) => {
+  const t = Date.parse(dateString)
+  if (isNaN(t)) {
+    return 'Unknown release date'
+  }
+  return format(t, 'PPP')
+}
+// new Date(Date.parse(dateString)).toLocaleDateString('en-US', {
+//   year: 'numeric',
+//   month: 'long',
+//   day: 'numeric',
+// })
 
 const FilmCard = ({ film }) => {
   return (
@@ -40,22 +48,21 @@ const FilmCard = ({ film }) => {
         className={classes['film-card']}
       >
         <div className={classes['film-card__content']}>
-          <Title level={3}>{film.title}</Title>
-          <Text type={'secondary'}>{parseAndFormatDate(film.release_date)}</Text>
-          <div className="film-card__genres">
-            {film.genre_ids.map((g, i) => {
-              return (
-                <Text code key={i} className={classes['film-card__genre']}>
-                  {g}
-                </Text>
-              )
-            })}
-          </div>
-          <Paragraph>{ellipsisOverview(film.overview, 34)}</Paragraph>
-          <div className="fil-card__stars">
-            <StarOutlined />
-            <StarFilled />
-          </div>
+          <Title level={3}>{ellipsisText(film.title, 3)}</Title>
+          {film.release_date && <Text type={'secondary'}>{parseAndFormatDate(film.release_date)}</Text>}
+          {!!film.genre_ids.length && (
+            <div className="film-card__genres">
+              {film.genre_ids.map((g) => {
+                return (
+                  <Text code key={g} className={classes['film-card__genre']}>
+                    {g}
+                  </Text>
+                )
+              })}
+            </div>
+          )}
+          <Paragraph>{ellipsisText(film.overview, 34)}</Paragraph>
+          <StarRating rating={film.vote_average} />
         </div>
       </Card>
     </Col>

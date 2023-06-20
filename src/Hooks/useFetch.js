@@ -9,7 +9,7 @@ export const useFetch = (callback) => {
       setLoading(true)
       await callback()
     } catch (e) {
-      setError(e.message)
+      setError(`${e.code} -- ${e.message}`)
     } finally {
       setLoading(false)
     }

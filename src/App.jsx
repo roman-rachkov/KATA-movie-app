@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Col, ConfigProvider, Layout, Row, Spin, Typography } from 'antd'
+import { Alert, Col, ConfigProvider, Layout, Row, Spin } from 'antd'
 
 import FilmList from './Components/FilmList'
 import { useFetch } from './Hooks/useFetch.js'
@@ -10,8 +10,9 @@ const { Header, Footer, Content } = Layout
 const App = () => {
   const [films, setFilms] = useState([])
   const [searchFilms, isLoading, error] = useFetch(async () => {
-    const res = await MovieService.Search('The Way')
-    setFilms(res.results)
+    await MovieService.Search('Batman').then((r) => {
+      setFilms(r.results)
+    })
   })
 
   useEffect(() => {
@@ -36,11 +37,11 @@ const App = () => {
         >
           <Content>
             <Row>
-              <Col offset={6} span={12}>
-                {error && <Typography.Text type={'danger'}>{error}</Typography.Text>}
+              <Col offset={5} span={14}>
+                {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
                 {isLoading ? (
                   <Row>
-                    <Spin tip={'Loading...'} style={{ margin: '0 auto' }} />
+                    <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
                   </Row>
                 ) : (
                   <FilmList films={films} />

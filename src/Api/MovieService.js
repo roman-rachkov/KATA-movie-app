@@ -6,26 +6,26 @@ const baseURL = 'https://api.themoviedb.org/3/'
 
 export default class MovieService {
   static async RequestApi(url, params = {}, method = 'GET') {
-    return await axios.request({
-      url,
-      baseURL,
-      method,
-      params,
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-    })
-  }
-
-  static async Search(query) {
-    return await this.RequestApi('search/movie', { query })
+    return await axios
+      .request({
+        url,
+        baseURL,
+        method,
+        params,
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+      })
       .then((r) => {
         if (r.status === 200) {
           return r.data
         }
         throw new Error(`Something wrong: ${r.status}`)
       })
-      .catch((e) => console.log(e))
+  }
+
+  static async Search(query) {
+    return await this.RequestApi('search/movie', { query })
   }
 }

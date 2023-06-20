@@ -8,9 +8,8 @@
 .film-card__content {
   display: flex;
   flex-direction: column;
-}
-
-.film-card__content {
+  height: 100%;
+  padding: 0 10px;
 }
 
 .film-card__image {
