@@ -25,7 +25,7 @@ export default class MovieService {
       })
   }
 
-  static async Search(query) {
-    return await this.RequestApi('search/movie', { query })
+  static async Search(query, page = 1) {
+    return await this.RequestApi('search/movie', { query, page })
   }
 }
