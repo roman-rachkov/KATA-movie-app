@@ -1,33 +1,33 @@
-import React, { useEffect, useState } from 'react'
-import { Alert, Col, ConfigProvider, Layout, Row, Spin, Pagination, Space, Input } from 'antd'
-import { debounce } from 'lodash'
+import React, { useLayoutEffect, useState } from 'react'
+import { ConfigProvider, Layout, Tabs } from 'antd'
 
-import FilmList from './Components/FilmList'
-import { useFetch } from './Hooks/useFetch.js'
-import MovieService from './Api/MovieService.js'
+import { MovieService } from './Services'
+import { Context } from './Context'
+import SearchTab from './Components/SearchTab'
+import RatedTab from './Components/RatedTab'
 
-const { Header, Footer, Content } = Layout
+const { Content } = Layout
 
 const App = () => {
-  const [films, setFilms] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalItems, setTotalItems] = useState(0)
-  const [queryString, setQueryString] = useState('')
-  const [searchFilms, isLoading, error] = useFetch(async () => {
-    await MovieService.Search(queryString, currentPage).then((r) => {
-      setFilms(r.results)
-      setTotalItems(r.total_results)
-    })
-  })
+  const [movie] = useState(new MovieService())
 
-  useEffect(() => {
-    searchFilms()
-  }, [currentPage, queryString])
+  useLayoutEffect(() => {
+    const createSession = async () => await movie.CreateGuestSession()
+    createSession()
+  }, [])
 
-  const queryInputHandler = (event) => {
-    setQueryString(event.target.value)
-  }
-  const debouncedQueryInputHandler = debounce(queryInputHandler, 400, { maxWait: 1000 })
+  const tabs = [
+    {
+      key: 1,
+      label: 'Search',
+      children: <SearchTab />,
+    },
+    {
+      key: 2,
+      label: 'Rated',
+      children: <RatedTab />,
+    },
+  ]
 
   return (
     <ConfigProvider
@@ -38,55 +38,22 @@ const App = () => {
         },
       }}
     >
-      <Layout>
-        <Header style={{ position: 'sticky', top: 0, left: 0, zIndex: 10 }}>
-          <Input placeholder="Type to search..." onChange={debouncedQueryInputHandler} />
-        </Header>
-        <Layout
-          style={{
-            background: '#fff',
-          }}
-        >
+      <Context.Provider
+        value={{
+          movie,
+        }}
+      >
+        <Layout>
           <Content>
-            <Row>
-              <Col offset={5} span={14}>
-                {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
-                {isLoading ? (
-                  <Row>
-                    <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
-                  </Row>
-                ) : (
-                  <FilmList films={films} />
-                )}
-              </Col>
-            </Row>
+            <Tabs
+              defaultActiveKey={1}
+              items={tabs}
+              style={{ background: '#fff', justifyContent: 'center' }}
+              destroyInactiveTabPane={true}
+            />
           </Content>
         </Layout>
-        <Footer>
-          <Row>
-            <Space direction={'horizontal'} style={{ width: '100%', justifyContent: 'center' }}>
-              <Pagination
-                defaultCurrent={1}
-                current={currentPage}
-                total={totalItems}
-                defaultPageSize={20}
-                showQuickJumper={false}
-                showSizeChanger={false}
-                hideOnSinglePage={true}
-                onChange={(page) => {
-                  setCurrentPage(page)
-                }}
-                itemRender={(page, type, originElement) => {
-                  if (page === currentPage && type === 'page') {
-                    return <a style={{ backgroundColor: '#4096ff', color: '#fff' }}>{page}</a>
-                  }
-                  return originElement
-                }}
-              />
-            </Space>
-          </Row>
-        </Footer>
-      </Layout>
+      </Context.Provider>
     </ConfigProvider>
   )
 }

@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Card, Col, Typography } from 'antd'
 import PropTypes from 'prop-types'
 import { format } from 'date-fns'
 
 import StarRating from '../StarRating/index.jsx'
+import { Context } from '../../Context'
 
 import classes from './FilmCard.module.css'
 
@@ -24,13 +25,16 @@ const parseAndFormatDate = (dateString) => {
   }
   return format(t, 'PPP')
 }
-// new Date(Date.parse(dateString)).toLocaleDateString('en-US', {
-//   year: 'numeric',
-//   month: 'long',
-//   day: 'numeric',
-// })
 
 const FilmCard = ({ film }) => {
+  console.log(film)
+
+  const { movie } = useContext(Context)
+
+  const changeRatingHandler = async (rating) => {
+    await movie.AddRatingToFilm(film.id, rating).then((r) => console.log(r))
+  }
+
   return (
     <Col span={12}>
       <Card
@@ -62,7 +66,7 @@ const FilmCard = ({ film }) => {
             </div>
           )}
           <Paragraph>{ellipsisText(film.overview, 34)}</Paragraph>
-          <StarRating rating={film.vote_average} />
+          <StarRating rating={film.rating ?? 0} changeRatingHandler={changeRatingHandler} />
         </div>
       </Card>
     </Col>
@@ -85,6 +89,7 @@ FilmCard.propTypes = {
     video: PropTypes.bool,
     vote_average: PropTypes.number,
     vote_count: PropTypes.number,
+    rating: PropTypes.oneOfType([PropTypes.number]),
   }),
 }
 
