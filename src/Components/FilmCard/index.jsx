@@ -27,8 +27,6 @@ const parseAndFormatDate = (dateString) => {
 }
 
 const FilmCard = ({ film }) => {
-  console.log(film)
-
   const { movie } = useContext(Context)
 
   const changeRatingHandler = async (rating) => {

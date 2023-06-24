@@ -1,20 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Alert, Pagination, Row, Spin } from 'antd'
+import { useContext, useEffect } from 'react'
 
-import FilmList from '../FilmList'
 import { Context } from '../../Context'
 import { useFetch } from '../../Hooks/useFetch.js'
 
-const RatedTab = () => {
-  const [films, setFilms] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalItems, setTotalItems] = useState(0)
-
+const RatedTab = ({ setFilms, setIsLoading, setError, currentPage, setTotalItems }) => {
   const { movie } = useContext(Context)
 
   const [getRatedFilms, isLoading, error] = useFetch(async () => {
     await movie.GetRatedFilms(currentPage).then((r) => {
-      console.log(r)
       setFilms(r.results)
       setTotalItems(r.total_results)
     })
@@ -22,41 +15,16 @@ const RatedTab = () => {
 
   useEffect(() => {
     getRatedFilms()
+      .then(() => {})
+      .catch(() => {
+        setError(error)
+      })
+      .finally(() => {
+        setIsLoading(isLoading)
+      })
   }, [currentPage])
 
-  return (
-    <>
-      {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
-      {isLoading ? (
-        <Row>
-          <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
-        </Row>
-      ) : (
-        <>
-          <FilmList films={films} />
-          <Pagination
-            defaultCurrent={1}
-            current={currentPage}
-            total={totalItems}
-            defaultPageSize={20}
-            showQuickJumper={false}
-            showSizeChanger={false}
-            hideOnSinglePage={true}
-            style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}
-            onChange={(page) => {
-              setCurrentPage(page)
-            }}
-            itemRender={(page, type, originElement) => {
-              if (page === currentPage && type === 'page') {
-                return <a style={{ backgroundColor: '#4096ff', color: '#fff' }}>{page}</a>
-              }
-              return originElement
-            }}
-          />
-        </>
-      )}
-    </>
-  )
+  return null
 }
 
 export default RatedTab
