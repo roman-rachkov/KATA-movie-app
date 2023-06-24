@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react'
-import { ConfigProvider, Layout, Tabs } from 'antd'
+import { Col, ConfigProvider, Layout, Tabs } from 'antd'
 
 import { MovieService } from './Services'
 import { Context } from './Context'
@@ -43,14 +43,16 @@ const App = () => {
           movie,
         }}
       >
-        <Layout>
+        <Layout style={{ backgroundColor: '#fff' }}>
           <Content>
-            <Tabs
-              defaultActiveKey={1}
-              items={tabs}
-              style={{ background: '#fff', justifyContent: 'center' }}
-              destroyInactiveTabPane={true}
-            />
+            <Col offset={4} span={16}>
+              <Tabs
+                defaultActiveKey={1}
+                items={tabs}
+                style={{ background: '#fff', justifyContent: 'center' }}
+                destroyInactiveTabPane={true}
+              />
+            </Col>
           </Content>
         </Layout>
       </Context.Provider>

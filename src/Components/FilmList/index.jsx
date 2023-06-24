@@ -10,13 +10,17 @@ const { Text } = Typography
 
 const FilmList = ({ films }) => {
   return (
-    <Row className={classes['film-list']} gutter={[16, 16]}>
+    <>
       {films.length ? (
-        films.map((film) => <FilmCard key={film.id} film={film} />)
+        <Row className={classes['film-list']} gutter={[16, 16]}>
+          {films.map((film) => (
+            <FilmCard key={film.id} film={film} />
+          ))}
+        </Row>
       ) : (
-        <Text tip={'Loading...'}>No one film</Text>
+        <Text style={{ marginTop: '20px', display: 'block' }}>No one film found</Text>
       )}
-    </Row>
+    </>
   )
 }
 

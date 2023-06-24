@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Alert, Col, Input, Pagination, Row, Spin } from 'antd'
+import { Alert, Input, Pagination, Spin } from 'antd'
 import { debounce } from 'lodash'
 
 import FilmList from '../FilmList'
@@ -31,38 +31,34 @@ const SearchTab = () => {
   const debouncedQueryInputHandler = debounce(queryInputHandler, 400, { maxWait: 1000 })
   return (
     <>
-      <Col offset={4} span={16}>
-        {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
-        <Input placeholder="Type to search..." onChange={debouncedQueryInputHandler} style={{ marginTop: '20px' }} />
-        {isLoading ? (
-          <Row>
-            <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
-          </Row>
-        ) : (
-          <>
-            <FilmList films={films} />
-            <Pagination
-              defaultCurrent={1}
-              current={currentPage}
-              total={totalItems}
-              defaultPageSize={20}
-              showQuickJumper={false}
-              showSizeChanger={false}
-              hideOnSinglePage={true}
-              style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}
-              onChange={(page) => {
-                setCurrentPage(page)
-              }}
-              itemRender={(page, type, originElement) => {
-                if (page === currentPage && type === 'page') {
-                  return <a style={{ backgroundColor: '#4096ff', color: '#fff' }}>{page}</a>
-                }
-                return originElement
-              }}
-            />
-          </>
-        )}
-      </Col>
+      {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
+      <Input placeholder="Type to search..." onChange={debouncedQueryInputHandler} style={{ marginTop: '20px' }} />
+      {isLoading ? (
+        <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
+      ) : (
+        <>
+          <FilmList films={films} />
+          <Pagination
+            defaultCurrent={1}
+            current={currentPage}
+            total={totalItems}
+            defaultPageSize={20}
+            showQuickJumper={false}
+            showSizeChanger={false}
+            hideOnSinglePage={true}
+            style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}
+            onChange={(page) => {
+              setCurrentPage(page)
+            }}
+            itemRender={(page, type, originElement) => {
+              if (page === currentPage && type === 'page') {
+                return <a style={{ backgroundColor: '#4096ff', color: '#fff' }}>{page}</a>
+              }
+              return originElement
+            }}
+          />
+        </>
+      )}
     </>
   )
 }

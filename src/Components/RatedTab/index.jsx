@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Alert, Col, Pagination, Row, Spin } from 'antd'
+import { Alert, Pagination, Row, Spin } from 'antd'
 
 import FilmList from '../FilmList'
 import { Context } from '../../Context'
@@ -13,7 +13,7 @@ const RatedTab = () => {
   const { movie } = useContext(Context)
 
   const [getRatedFilms, isLoading, error] = useFetch(async () => {
-    await movie.GetRatedFilms().then((r) => {
+    await movie.GetRatedFilms(currentPage).then((r) => {
       console.log(r)
       setFilms(r.results)
       setTotalItems(r.total_results)
@@ -26,37 +26,35 @@ const RatedTab = () => {
 
   return (
     <>
-      <Col offset={4} span={16}>
-        {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
-        {isLoading ? (
-          <Row>
-            <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
-          </Row>
-        ) : (
-          <>
-            <FilmList films={films} />
-            <Pagination
-              defaultCurrent={1}
-              current={currentPage}
-              total={totalItems}
-              defaultPageSize={20}
-              showQuickJumper={false}
-              showSizeChanger={false}
-              hideOnSinglePage={true}
-              style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}
-              onChange={(page) => {
-                setCurrentPage(page)
-              }}
-              itemRender={(page, type, originElement) => {
-                if (page === currentPage && type === 'page') {
-                  return <a style={{ backgroundColor: '#4096ff', color: '#fff' }}>{page}</a>
-                }
-                return originElement
-              }}
-            />
-          </>
-        )}
-      </Col>
+      {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
+      {isLoading ? (
+        <Row>
+          <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
+        </Row>
+      ) : (
+        <>
+          <FilmList films={films} />
+          <Pagination
+            defaultCurrent={1}
+            current={currentPage}
+            total={totalItems}
+            defaultPageSize={20}
+            showQuickJumper={false}
+            showSizeChanger={false}
+            hideOnSinglePage={true}
+            style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}
+            onChange={(page) => {
+              setCurrentPage(page)
+            }}
+            itemRender={(page, type, originElement) => {
+              if (page === currentPage && type === 'page') {
+                return <a style={{ backgroundColor: '#4096ff', color: '#fff' }}>{page}</a>
+              }
+              return originElement
+            }}
+          />
+        </>
+      )}
     </>
   )
 }

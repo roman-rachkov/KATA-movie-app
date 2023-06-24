@@ -40,8 +40,8 @@ export default class MovieService {
       })
   }
 
-  async GetRatedFilms() {
-    return await this.RequestApi(`guest_session/${this.guestSessionId}/rated/movies`)
+  async GetRatedFilms(page) {
+    return await this.RequestApi(`guest_session/${this.guestSessionId}/rated/movies`, {}, { page })
   }
 
   async AddRatingToFilm(movieId, rating) {
