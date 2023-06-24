@@ -6,11 +6,13 @@ import { Context } from './Context'
 import SearchTab from './Components/SearchTab'
 import RatedTab from './Components/RatedTab'
 import FilmList from './Components/FilmList/index.jsx'
+import { useFetch } from './Hooks/useFetch.js'
 
 const { Content } = Layout
 
 const App = () => {
   const [movie] = useState(new MovieService())
+  const [genres, setGenres] = useState([])
   const [films, setFilms] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
@@ -22,9 +24,17 @@ const App = () => {
     setRatedFilms((oldState) => [...oldState.filter((film) => film.id !== filmId), { id: filmId, rating }])
   }
 
+  const [getGenres] = useFetch(
+    async () =>
+      await movie.getGenreList().then((response) => {
+        setGenres(response.genres)
+      })
+  )
+
   useLayoutEffect(() => {
     const createSession = async () => await movie.CreateGuestSession()
     createSession()
+    getGenres()
   }, [])
 
   const tabs = [
@@ -76,6 +86,7 @@ const App = () => {
       <Context.Provider
         value={{
           movie,
+          genres,
         }}
       >
         <Layout style={{ backgroundColor: '#fff' }}>

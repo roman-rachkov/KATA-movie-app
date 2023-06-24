@@ -27,12 +27,17 @@ const parseAndFormatDate = (dateString) => {
 }
 
 const FilmCard = ({ film, setRatingHandler }) => {
-  const { movie } = useContext(Context)
+  const { movie, genres } = useContext(Context)
 
   const changeRatingHandler = async (rating) => {
     await movie.AddRatingToFilm(film.id, rating).then(() => {
       setRatingHandler(film.id, rating)
     })
+  }
+
+  const getGenreName = (genreId) => {
+    const genre = genres.find((genreItem) => genreItem.id === genreId)
+    return genre.name
   }
 
   const ratingColor = () => {
@@ -68,10 +73,10 @@ const FilmCard = ({ film, setRatingHandler }) => {
           {film.release_date && <Text type={'secondary'}>{parseAndFormatDate(film.release_date)}</Text>}
           {!!film.genre_ids.length && (
             <div className="film-card__genres">
-              {film.genre_ids.map((g) => {
+              {film.genre_ids.map((genreId) => {
                 return (
-                  <Text code key={g} className={classes.filmCard__genre}>
-                    {g}
+                  <Text code key={genreId} className={classes.filmCard__genre}>
+                    {getGenreName(genreId)}
                   </Text>
                 )
               })}

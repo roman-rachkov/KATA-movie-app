@@ -52,4 +52,8 @@ export default class MovieService {
       'POST'
     )
   }
+
+  async getGenreList() {
+    return await this.RequestApi('genre/movie/list')
+  }
 }
