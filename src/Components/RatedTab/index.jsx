@@ -7,9 +7,9 @@ const RatedTab = ({ setFilms, setIsLoading, setError, currentPage, setTotalItems
   const { movie } = useContext(Context)
 
   const [getRatedFilms, isLoading, error] = useFetch(async () => {
-    await movie.GetRatedFilms(currentPage).then((r) => {
-      setFilms(r.results)
-      setTotalItems(r.total_results)
+    await movie.GetRatedFilms(currentPage).then((response) => {
+      setFilms(response.results)
+      setTotalItems(response.total_results)
     })
   })
 

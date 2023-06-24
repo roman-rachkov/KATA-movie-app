@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react'
-import { Alert, Col, ConfigProvider, Layout, Pagination, Spin, Tabs } from 'antd'
+import { Alert, Col, ConfigProvider, Layout, Pagination, Row, Spin, Tabs } from 'antd'
 
 import { MovieService } from './Services'
 import { Context } from './Context'
@@ -16,6 +16,11 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
   const [error, setError] = useState(false)
+  const [ratedFilms, setRatedFilms] = useState([])
+
+  const changeRatingHandler = (filmId, rating) => {
+    setRatedFilms((oldState) => [...oldState.filter((film) => film.id !== filmId), { id: filmId, rating }])
+  }
 
   useLayoutEffect(() => {
     const createSession = async () => await movie.CreateGuestSession()
@@ -33,6 +38,7 @@ const App = () => {
           currentPage={currentPage}
           setTotalItems={setTotalItems}
           setError={setError}
+          ratedFilms={ratedFilms}
         />
       ),
     },
@@ -87,12 +93,13 @@ const App = () => {
               />
 
               <>
-                {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
                 {isLoading ? (
-                  <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
+                  <Row>
+                    <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
+                  </Row>
                 ) : (
                   <>
-                    <FilmList films={films} />
+                    <FilmList films={films} setRatingHandler={changeRatingHandler} />
                     <Pagination
                       defaultCurrent={1}
                       current={currentPage}
@@ -103,6 +110,7 @@ const App = () => {
                       hideOnSinglePage={true}
                       style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}
                       onChange={(page) => {
+                        setIsLoading(true)
                         setCurrentPage(page)
                       }}
                       itemRender={paginationItemRender}
@@ -110,6 +118,7 @@ const App = () => {
                   </>
                 )}
               </>
+              {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
             </Col>
           </Content>
         </Layout>

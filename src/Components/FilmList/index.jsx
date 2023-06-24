@@ -8,13 +8,13 @@ import classes from './FilmList.module.css'
 
 const { Text } = Typography
 
-const FilmList = ({ films }) => {
+const FilmList = ({ films, setRatingHandler }) => {
   return (
     <>
       {films.length ? (
         <Row className={classes['film-list']} gutter={[16, 16]}>
           {films.map((film) => (
-            <FilmCard key={film.id} film={film} />
+            <FilmCard key={film.id} film={film} setRatingHandler={setRatingHandler} />
           ))}
         </Row>
       ) : (
