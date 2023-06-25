@@ -1,12 +1,12 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, Col, ConfigProvider, Layout, Pagination, Row, Spin, Tabs } from 'antd'
 
-import { MovieService } from './Services'
-import { Context } from './Context'
-import SearchTab from './Components/SearchTab'
-import RatedTab from './Components/RatedTab'
-import FilmList from './Components/FilmList/index.jsx'
-import { useFetch } from './Hooks/useFetch.js'
+import { MovieService } from './services'
+import { Context } from './context'
+import SearchTab from './components/SearchTab'
+import RatedTab from './components/RatedTab'
+import FilmList from './components/FilmList'
+import { useFetch } from './hooks'
 
 const { Content } = Layout
 
@@ -20,22 +20,31 @@ const App = () => {
   const [error, setError] = useState(false)
   const [ratedFilms, setRatedFilms] = useState([])
 
-  const changeRatingHandler = (filmId, rating) => {
+  const changeRatingHandler = async (filmId, rating) => {
     setRatedFilms((oldState) => [...oldState.filter((film) => film.id !== filmId), { id: filmId, rating }])
+    await movie.addRatingToFilm(filmId, rating).catch((exception) => setError(exception.message))
   }
 
-  const [getGenres] = useFetch(
+  const [getGenres, genreLoading, genreError] = useFetch(
     async () =>
       await movie.getGenreList().then((response) => {
         setGenres(response.genres)
       })
   )
 
-  useLayoutEffect(() => {
-    const createSession = async () => await movie.CreateGuestSession()
+  useEffect(() => {
+    const createSession = async () => await movie.createGuestSession()
     createSession()
     getGenres()
   }, [])
+
+  useEffect(() => {
+    setIsLoading(genreLoading)
+  }, [genreLoading])
+
+  useEffect(() => {
+    setError(genreError)
+  }, [genreError])
 
   const tabs = [
     {
@@ -74,6 +83,12 @@ const App = () => {
     return originElement
   }
 
+  const changeTabHandler = () => {
+    setFilms([])
+    setIsLoading(true)
+    setCurrentPage(1)
+  }
+
   return (
     <ConfigProvider
       theme={{
@@ -91,19 +106,17 @@ const App = () => {
       >
         <Layout style={{ backgroundColor: '#fff' }}>
           <Content>
-            <Col offset={4} span={16}>
+            <Col xs={{ span: 22, offset: 1 }} md={{ span: 14, offset: 4 }}>
               <Tabs
                 defaultActiveKey={1}
                 items={tabs}
                 style={{ background: '#fff', justifyContent: 'center' }}
                 destroyInactiveTabPane={true}
-                onChange={() => {
-                  setIsLoading(true)
-                  setCurrentPage(1)
-                }}
+                onChange={changeTabHandler}
               />
 
               <>
+                {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
                 {isLoading ? (
                   <Row>
                     <Spin tip={'Loading...'} style={{ margin: '10px auto' }} />
@@ -129,7 +142,6 @@ const App = () => {
                   </>
                 )}
               </>
-              {error && <Alert type={'error'} message={error} style={{ margin: '10px auto' }} />}
             </Col>
           </Content>
         </Layout>

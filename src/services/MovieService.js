@@ -6,7 +6,7 @@ const baseURL = 'https://api.themoviedb.org/3/'
 export default class MovieService {
   guestSessionId
 
-  async RequestApi(url, data = {}, params = {}, method = 'GET') {
+  async requestApi(url, data = {}, params = {}, method = 'GET') {
     return await axios
       .request({
         url,
@@ -26,26 +26,22 @@ export default class MovieService {
       })
   }
 
-  async Search(query, page = 1) {
-    return await this.RequestApi('search/movie', {}, { query, page })
+  async search(query, page = 1) {
+    return await this.requestApi('search/movie', {}, { query, page })
   }
 
-  async CreateGuestSession() {
-    return await this.RequestApi('authentication/guest_session/new')
-      .then((r) => {
-        this.guestSessionId = r.guest_session_id
-      })
-      .catch((e) => {
-        console.log(e)
-      })
+  async createGuestSession() {
+    return await this.requestApi('authentication/guest_session/new').then((r) => {
+      this.guestSessionId = r.guest_session_id
+    })
   }
 
-  async GetRatedFilms(page) {
-    return await this.RequestApi(`guest_session/${this.guestSessionId}/rated/movies`, {}, { page })
+  async getRatedFilms(page) {
+    return await this.requestApi(`guest_session/${this.guestSessionId}/rated/movies`, {}, { page })
   }
 
-  async AddRatingToFilm(movieId, rating) {
-    return await this.RequestApi(
+  async addRatingToFilm(movieId, rating) {
+    return await this.requestApi(
       `movie/${movieId}/rating`,
       { value: rating },
       { guest_session_id: this.guestSessionId },
@@ -54,6 +50,6 @@ export default class MovieService {
   }
 
   async getGenreList() {
-    return await this.RequestApi('genre/movie/list')
+    return await this.requestApi('genre/movie/list')
   }
 }

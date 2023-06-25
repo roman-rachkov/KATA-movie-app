@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Typography } from 'antd'
+import { Col, Row, Typography } from 'antd'
 import PropTypes from 'prop-types'
 
 import FilmCard from '../FilmCard'
@@ -14,7 +14,9 @@ const FilmList = ({ films, setRatingHandler }) => {
       {films.length ? (
         <Row className={classes['film-list']} gutter={[16, 16]}>
           {films.map((film) => (
-            <FilmCard key={film.id} film={film} setRatingHandler={setRatingHandler} />
+            <Col key={film.id} xs={{ span: 24, offset: 0 }} md={{ span: 12 }}>
+              <FilmCard film={film} setRatingHandler={setRatingHandler} />
+            </Col>
           ))}
         </Row>
       ) : (
