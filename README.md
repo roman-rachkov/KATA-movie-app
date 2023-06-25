@@ -1,4 +1,4 @@
 # KATA-movie-app
 
-##DEMO
+## DEMO
 https://roman-rachkov.github.io/KATA-movie-app/
