@@ -54,7 +54,7 @@ const FilmCard = ({ film, setRatingHandler }) => {
             film.poster_path ? `https://image.tmdb.org/t/p/w500/${film.poster_path}` : 'https://via.placeholder.com/200'
           }
           className={classes.filmCard__image}
-        ></img>
+        />
       }
       className={classes.filmCard}
     >
